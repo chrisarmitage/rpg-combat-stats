@@ -1,10 +1,13 @@
 <?php
 
+use App\DiceBag;
+use App\Person;
+
 require_once __DIR__ . '/vendor/autoload.php';
 
-$diceBag = new \App\DiceBag();
+$diceBag = new DiceBag();
 
-$numberOfFights = 10000;
+$numberOfFights = 1000;
 
 $rulesets = [
     'STANDARD' => 'Standard',
@@ -122,7 +125,7 @@ foreach ($rulesets as $ruleset => $rulesetDesc) {
 
 }
 
-function rollDamage($ggAttLvl, $bgDefLvl, \App\DiceBag $diceBag) {
+function rollDamage($ggAttLvl, $bgDefLvl, DiceBag $diceBag) {
     $attackRoll = $diceBag->bell(0, $ggAttLvl, ($ggAttLvl - 0) / 3.3, 0.0001);
     $defenceRoll = $diceBag->bell(0, $bgDefLvl, ($bgDefLvl - 0) / 3.3, 0.0001);
 
@@ -133,32 +136,4 @@ function rollDamage($ggAttLvl, $bgDefLvl, \App\DiceBag $diceBag) {
     }
 
     return $damageTaken;
-}
-
-
-
-class Person
-{
-    public $name;
-    public $level;
-    public $health;
-    public $attack;
-    public $defence;
-
-    /**
-     * Person constructor.
-     * @param $name
-     * @param $level
-     * @param $health
-     * @param $attack
-     * @param $defence
-     */
-    public function __construct($name, $level, $health, $attack, $defence)
-    {
-        $this->name = $name;
-        $this->level = $level;
-        $this->health = $health;
-        $this->attack = $attack;
-        $this->defence = $defence;
-    }
 }
