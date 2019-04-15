@@ -2,10 +2,11 @@
 
 use App\DiceBag;
 use App\Person;
+use App\System\LotGD\CombatService;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$diceBag = new DiceBag();
+$combatService = new CombatService(new DiceBag());
 
 $numberOfFights = 1000;
 
@@ -85,7 +86,7 @@ foreach ($rulesets as $ruleset => $rulesetDesc) {
                 }
             }
 
-            $roll = rollDamage($goodGuyAttackSkill, $badGuy->defence, $diceBag);
+            $roll = $combatService->rollDamage($goodGuyAttackSkill, $badGuy->defence);
 
             $goodGuyDamageDone = $roll;
 
@@ -97,7 +98,7 @@ foreach ($rulesets as $ruleset => $rulesetDesc) {
 
             // Bad guy attacks
             if ($badGuy->health > 0) {
-                $roll = rollDamage($badGuy->attack, $goodGuy->defence, $diceBag);
+                $roll = $combatService->rollDamage($badGuy->attack, $goodGuy->defence);
 
                 $badGuyDamageDone = $roll;
 
@@ -123,17 +124,4 @@ foreach ($rulesets as $ruleset => $rulesetDesc) {
     echo "GW: {$results['goodWins']}\t" . round(($results['goodWins'] / $numberOfFights) * 100) . "% - ";
     echo round(($results['badWins'] / $numberOfFights) * 100) . "%\t{$results['badWins']}" . PHP_EOL;
 
-}
-
-function rollDamage($ggAttLvl, $bgDefLvl, DiceBag $diceBag) {
-    $attackRoll = $diceBag->bell(0, $ggAttLvl, ($ggAttLvl - 0) / 3.3, 0.0001);
-    $defenceRoll = $diceBag->bell(0, $bgDefLvl, ($bgDefLvl - 0) / 3.3, 0.0001);
-
-    $damageTaken = 0 - (int)($defenceRoll - $attackRoll);
-
-    if ($damageTaken < 0) {
-        $damageTaken = (int) ($damageTaken / 2);
-    }
-
-    return $damageTaken;
 }
