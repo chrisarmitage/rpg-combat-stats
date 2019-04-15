@@ -1,5 +1,9 @@
 <?php
 
+require_once __DIR__ . '/vendor/autoload.php';
+
+$diceBag = new \App\DiceBag();
+
 $numberOfFights = 10000;
 
 $rulesets = [
@@ -78,7 +82,7 @@ foreach ($rulesets as $ruleset => $rulesetDesc) {
                 }
             }
 
-            $roll = rollDamage($goodGuyAttackSkill, $badGuy->defence);
+            $roll = rollDamage($goodGuyAttackSkill, $badGuy->defence, $diceBag);
 
             $goodGuyDamageDone = $roll;
 
@@ -90,7 +94,7 @@ foreach ($rulesets as $ruleset => $rulesetDesc) {
 
             // Bad guy attacks
             if ($badGuy->health > 0) {
-                $roll = rollDamage($badGuy->attack, $goodGuy->defence);
+                $roll = rollDamage($badGuy->attack, $goodGuy->defence, $diceBag);
 
                 $badGuyDamageDone = $roll;
 
@@ -118,9 +122,9 @@ foreach ($rulesets as $ruleset => $rulesetDesc) {
 
 }
 
-function rollDamage($ggAttLvl, $bgDefLvl) {
-    $attackRoll = purebell(0, $ggAttLvl, ($ggAttLvl - 0) / 3.3, 0.0001);
-    $defenceRoll = purebell(0, $bgDefLvl, ($bgDefLvl - 0) / 3.3, 0.0001);
+function rollDamage($ggAttLvl, $bgDefLvl, \App\DiceBag $diceBag) {
+    $attackRoll = $diceBag->bell(0, $ggAttLvl, ($ggAttLvl - 0) / 3.3, 0.0001);
+    $defenceRoll = $diceBag->bell(0, $bgDefLvl, ($bgDefLvl - 0) / 3.3, 0.0001);
 
     $damageTaken = 0 - (int)($defenceRoll - $attackRoll);
 
@@ -131,16 +135,7 @@ function rollDamage($ggAttLvl, $bgDefLvl) {
     return $damageTaken;
 }
 
-function purebell($min, $max, $standardDeviation, $step = 1) {
-    $rand1 = (float)mt_rand()/(float)mt_getrandmax();
-    $rand2 = (float)mt_rand()/(float)mt_getrandmax();
-    $gaussianNumber = sqrt(-2 * log($rand1)) * cos(2 * M_PI * $rand2);
-    $mean = ($max + $min) / 2;
-    $randomNumber = ($gaussianNumber * $standardDeviation) + $mean;
-    $randomNumber = round($randomNumber / $step) * $step;
 
-    return $randomNumber;
-}
 
 class Person
 {
