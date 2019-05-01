@@ -24,4 +24,14 @@ class DiceBag
 
         return $randomNumber;
     }
+
+    public function roll($code) :int
+    {
+        $matches = [];
+        if (preg_match('/^(?<times>\d+)d(?<die>\d+)$/', $code, $matches)) {
+            return mt_rand(1, $matches['die']);
+        }
+
+        throw new \Exception('Unrecognised format');
+    }
 }
